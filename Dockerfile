@@ -13,12 +13,12 @@ WORKDIR /script
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# ensure /script files are owned by non-root before switching
-COPY --chown=appuser:appuser script/ .
-
 # Create non-root user
 RUN useradd -m appuser
 USER appuser
+
+# ensure /script files are owned by non-root before switching
+COPY --chown=appuser:appuser script/ .
 
 # Run the worker
 CMD ["python3", "/script/sensors_moisture.py"]
