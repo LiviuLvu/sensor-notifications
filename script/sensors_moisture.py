@@ -1,8 +1,8 @@
 import os
 import paho.mqtt.client as mqtt
 
-MQTT_HOST = os.getenv('MQTT_HOST') # 192.168.2.40
-MQTT_PORT = int(os.getenv('MQTT_PORT')) # 1883
+MQTT_HOST = os.getenv('MQTT_HOST')
+MQTT_PORT = int(os.getenv('MQTT_PORT'))
 MQTT_USERNAME = os.getenv('MQTT_USERNAME')
 MQTT_PASSWORD = os.getenv('MQTT_PASSWORD')
 MQTT_CLIENT_ID = os.getenv('MQTT_CLIENT_ID') # python-sensors
