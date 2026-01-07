@@ -1,148 +1,131 @@
-# Zigbee2mqtt
-## Push notifications from sensors
-
-## Why this project?
-
-Needed a reliable way to monitor and get alerts based on sensors I use around the house.  
-Practical, fun way to use Python to solve problems in home automation.
-
-### Why not Home Assistant?
-
-- Tested inside Proxmox container: difficult to pair sensors, displays duplicates, and can break after updates.
-- I don't want to use a dedicated device, so that HA can work well with usb zigbee antena.
-
----
-
-## Components needed for my Proxmox setup
-
-### 1. Zigbee antenna (USB)
-
-Already have a USB from Conbee II which works great.
-
-Check it is recognized and available in Proxmox:
-
-```bash
-ls /dev/serial/by-id/
+# Zigbee2mqtt  
+Push notifications from sensors  
+  
+**Why this project?**  
+Needed a reliable way to monitor and get alerts based on sensors i use around the house.   
+Practical, fun way to use Python to solve problems in home automation.  
+Why not Homeassistant?  
+Tested inside Proxmox container, it is difficult to pair sensors, displays duplicates, and can brake after updates.  
+I dont want to use a dedicated device only for it Homeassistant.   
+  
+**Components needed for my Proxmox setup:**  
+  
+**1 Zigbee antenna USB**  
+Already have a usb from Conbee II which works great.  
+Check its recognized and available in Proxmox:  
+List all usb devices and search for your specific device:  
 ```
+ls /dev/serial/by-id/ 
 
----
-
-### 2. MQTT message broker
-
-**What it is:**  
-Central server for the Message Queuing Telemetry Transport protocol, lightweight publish-subscribe protocol designed for IoT devices with low power and bandwidth.
-
-**Selected option:** Mosquitto  
-https://mosquitto.org/
-
-- Proxmox LXC helper:  
-  https://community-scripts.github.io/ProxmoxVE/scripts?id=mqtt
-- Chosen because it was available in Proxmox helpers and required fewer resources than EMQX.
-
+```
+  
+**2 MQTT message broker**  
+What it is:  
+central server for the Message Queuing Telemetry Transport protocol, lightweight publish-subscribe protocol designed for IOT devices limited in power and low bandwith.  
+Selected option: **Mosquito**  
+[https://mosquitto.org/](https://mosquitto.org/)  
+  Proxmox LXC helper: [https://community-scripts.github.io/ProxmoxVE/scripts?id=mqtt](https://community-scripts.github.io/ProxmoxVE/scripts?id=mqtt)  
+  Chose this one because it was available in Proxmox helpers and required less resource than the alternative EMQX.  
 **Post install steps:**  
-https://github.com/community-scripts/ProxmoxVE/discussions/782
-
----
-
-### 3. MQTT client
-
-**What it is:**  
-Software that enables connection to an MQTT broker.
-
-**Selected software:** zigbee2mqtt  
-https://www.zigbee2mqtt.io/
-
-- Docker compose:  
-  https://www.zigbee2mqtt.io/guide/installation/02_docker.html
-- Proxmox LXC helper:  
-  https://community-scripts.github.io/ProxmoxVE/scripts?id=zigbee2mqtt
-- This was the only zigbee–mqtt software available in Proxmox helpers.
-
+[https://github.com/community-scripts/ProxmoxVE/discussions/782](https://github.com/community-scripts/ProxmoxVE/discussions/782)   
+  
+**3 MQTT client**  
+What it is:  
+software that enables connection to a MQTT broker.  
+Selected software: **zigbee2mqtt**  
+[https://www.zigbee2mqtt.io/](https://www.zigbee2mqtt.io/)   
+  Docker compose [https://www.zigbee2mqtt.io/guide/installation/02_docker.html](https://www.zigbee2mqtt.io/guide/installation/02_docker.html)  
+  Proxmox LXC helper: [https://community-scripts.github.io/ProxmoxVE/scripts?id=zigbee2mqtt](https://community-scripts.github.io/ProxmoxVE/scripts?id=zigbee2mqtt)  
+  This was the only zigbee - mqtt software available in proxmox helpers.  
 **Post install steps:**  
-https://github.com/community-scripts/ProxmoxVE/discussions/410
-
----
-
-### 4. Push notification options
-
-- Pushover: https://pushover.net/  
-- Telegram: never used  
-- Email: delayed, might miss something urgent (e.g., pipe leak)
-
----
-
-## Mosquitto LXC final settings
-
+[https://github.com/community-scripts/ProxmoxVE/discussions/410](https://github.com/community-scripts/ProxmoxVE/discussions/410)   
+  
+**4 Push notification option**  
+Options:  
+**Pushover:** Small multiplaform app, seems convenient  
+[https://pushover.net/](https://pushover.net/)   
+Telegram: Never used, not sure its worth creating account  
+Email: Delayed, might miss something urgent like a pipe leak  
+  
+  
+### Mosquitto last step confirmation  
 ```
 Container Type: Unprivileged
 Container ID: 101
-Hostname: mqtt
+Hostname: mqtt   
 
-Disk: 2 GB
-CPU: 1 core
-RAM: 512 MiB
+Resources:       
+  Disk: 2 GB     
+  CPU: 1 cores   
+  RAM: 512 MiB   
 
-Bridge: vmbr0
-IPv4: 192.168.2.40/24
+Network:         
+  Bridge: vmbr0  
+  IPv4: 192.168.2.40/24 
+  IPv6: none     
 
-Timezone: Europe/Bucharest
+  Features:        
+    FUSE: no | TUN: no    
+  Nesting: Enabled | Keyctl: Disabled
+  GPU: no | Protection: No  
+
+  Advanced:        
+    Timezone: Europe/Bucharest
+  APT Cacher: no 
+    Verbose: no    
+
+Create MQTT LXC with these settings?...
+
 ```
-
-Access it using:  
-http://192.168.2.40:1883
-
----
-
-## Zigbee2mqtt LXC final settings
-
+Access it using the following:  
+[http://192.168.2.40:1883](http://192.168.2.40:1883)   
+  
+### Zigbee2mqtt last step confirmation  
 ```
 Container Type: Privileged
 Container ID: 102
 Hostname: zigbee2mqtt
+Resources:
+  Disk: 5 GB  
+    CPU: 2 cores
+    RAM: 1024 MiB  
 
-Disk: 5 GB
-CPU: 2 cores
-RAM: 1024 MiB
+Network:  
+  Bridge: vmbr0  
+  IPv4: 192.168.2.42/24 
+  IPv6: none  
+  Features: 
+  FUSE: no | TUN: no 
+    Nesting: Enabled | Keyctl: Disabled
+  GPU: no | Protection: No
 
-Bridge: vmbr0
-IPv4: 192.168.2.42/24
+Advanced: 
+  Timezone: Europe/Bucharest
+  APT Cacher: no 
+  Verbose: yes
 
-Timezone: Europe/Bucharest
+Create Zigbee2MQTT LXC with these settings?...
+
 ```
-
-Access it using:  
-http://192.168.2.42:9442
-
----
-
-## Debugging
-
-Check logs:
-
-```bash
-journalctl -u zigbee2mqtt -n 50 --no-pager
+Access it using the following:  
+[http://192.168.2.42:9442](http://192.168.2.42:9442)   
+  
+**Debugging**  
+Check Logs: journalctl -u zigbee2mqtt -n 50 --no-pager  
+Check config yaml settings:  
+[https://www.zigbee2mqtt.io/guide/configuration/all-settings.html?utm_source=copilot.com#advanced](https://www.zigbee2mqtt.io/guide/configuration/all-settings.html?utm_source=copilot.com#advanced)  
+  
+**Zigbee2mqtt service issues installing and starting**  
+ - specified static ip. It was not connecting to Opnsense DHCP  
+ - accidentaly activated ssh, then had to deactivate it manually from inside container  
+ - conbee II usb was used in another container. I had HomeAssistant running there  
+ - frontend host set to internal "Localhost" instead of 0.0.0.0  
+ - permit_join was set to false. Allows devices to join network  
+ - reject_unauthorized was set to true, but there is not SSL cert setup yet  
+ - wrong serial port. Did not put the full path  
+  
+Changes made to the postinstall config example (bold text):  
 ```
-
-Config reference:  
-https://www.zigbee2mqtt.io/guide/configuration/all-settings.html#advanced
-
----
-
-## Issues encountered
-
-- Static IP not connecting to OPNsense DHCP
-- SSH accidentally enabled
-- Conbee II USB used in another container (Home Assistant)
-- Frontend host set to `localhost` instead of `0.0.0.0`
-- `permit_join` was false
-- `reject_unauthorized` was true without SSL
-- Wrong serial port path
-
----
-
-## Final Zigbee2MQTT config
-
-```yaml
 version: 4
 homeassistant:
   enabled: false
@@ -166,36 +149,33 @@ advanced:
   pan_id: GENERATE
   network_key: GENERATE
   channel: 20
+
 ```
-
----
-
-## Python MQTT library
-
-https://eclipse.dev/paho/files/paho.mqtt.python/html/client.html
-
----
-
-## Python script (MQTT client)
-
-```python
+  
+**Python libraries**  
+[https://eclipse.dev/paho/files/paho.mqtt.python/html/client.html](https://eclipse.dev/paho/files/paho.mqtt.python/html/client.html)   
+  
+**Script connecting to MQTT broker**  
+```
 import os
 import paho.mqtt.client as mqtt
 
-MQTT_HOST = os.getenv("MQTT_HOST")
-MQTT_PORT = int(os.getenv("MQTT_PORT"))
+MQTT_HOST = os.getenv("MQTT_HOST") # 192.168.2.40
+MQTT_PORT = int(os.getenv("MQTT_PORT")) # 1883
 MQTT_USERNAME = os.getenv("MQTT_USERNAME")
 MQTT_PASSWORD = os.getenv("MQTT_PASSWORD")
-MQTT_CLIENT_ID = os.getenv("MQTT_CLIENT_ID")
+MQTT_CLIENT_ID = os.getenv("MQTT_CLIENT_ID") # python-sensors
 
 if not MQTT_HOST:
-    raise RuntimeError("MQTT Host is not set")
+    raise RuntimeError("🚨 MQTT Host is not set")
 
+# The callback called when the client responds to connection request
 def on_connect(client, userdata, flags, reason_code, properties=None):
-    print("Connected to MQTT with result code:", reason_code)
+    print('Connected to MQTT with result code:', reason_code)
     if reason_code == 0:
-        client.subscribe("zigbee2mqtt/0xa4c13875a846a8f4")
+        client.subscribe("zigbee2mqtt/0xa4c13875a846a8f4")  # change to a specific topic
 
+# Callback called when a message has been received on a topic that the client subscribes to
 def on_message(client, userdata, message):
     print(f"Message received: {message.topic} {message.payload!r}")
 
@@ -212,66 +192,52 @@ def main():
     client.on_connect = on_connect
     client.on_message = on_message
 
+    # Let Paho handle reconnects
     client.reconnect_delay_set(min_delay=1, max_delay=30)
 
     print("Connecting to MQTT...")
     client.connect(MQTT_HOST, MQTT_PORT, keepalive=60)
+
+     # Blocks forever, auto-reconnects internally
     client.loop_forever()
 
+# Only run main if script is executed directly, not when imported
 if __name__ == "__main__":
     main()
+
 ```
-
----
-
-## Successful log output
-
+  
+**Successful logs** from running above script:  
 ```
 Connecting to MQTT...
 Connected to MQTT with result code: Success
 Message received: zigbee2mqtt/0xa4c13875a846a8f4 b'{"battery":68,"battery_low":false,"linkquality":255,"water_leak":false}'
+
 ```
-
----
-
-## Mosquitto testing
-
-Subscriber:
-
-```bash
-mosquitto_sub -h localhost -t test/topic -v
-```
-
-Publisher:
-
-```bash
-mosquitto_pub -h localhost -t test/topic -m "hello mqtt"
-```
-
-Remote test:
-
-```bash
-mosquitto_pub -h 192.168.2.XX -t test/topic -m "test from remote"
-```
-
-Logs:
-
-```bash
-tail -f /var/log/mosquitto/mosquitto.log
-```
-
----
-
-## TODO
-
-- [x] Install client
-- [x] Install broker
-- [x] Pair sensor to zigbee2mqtt
-- [x] Write script and test notification
-- [ ] Containerize script
-- [ ] Install push notification app and get API key
-- [ ] Use script to push received message to phone
-- [ ] Deploy script in Dokploy
-
-Optional:
-- Pair Home Assistant to Zigbee
+  
+**Mosquito message queue testing:**  
+Test publish/subscribe:  
+  
+In one terminal (subscriber):  
+mosquitto_sub -h localhost -t test/topic -v  
+In another terminal (publisher):  
+mosquitto_pub -h localhost -t test/topic -m "hello mqtt"  
+You should see "hello mqtt" appear in the subscriber terminal.  
+  
+From your zigbee2mqtt container or your computer:  
+mosquitto_pub -h 192.168.2.XX -t test/topic -m "test from remote"  
+(Replace XX with your MQTT container's IP)  
+Check logs for errors  
+tail -f /var/log/mosquitto/mosquitto.log  
+  
+**Remaining todo:**  
+[x] Install client  
+[x] install broker  
+[x] pair sensor to zigbee2mqtt, check state  
+[x] write script and test notification in dev container  
+[x] containerize script in python based image  
+[ ] install push notification app, get api key  
+[ ] use script to push received message to phone  
+[ ] deploy script on Proxmox *push img to ghrc, pull img in dokploy,  
+Optional  
+[ ] pair homeassistant to zigbee  
