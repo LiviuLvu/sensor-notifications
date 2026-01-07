@@ -1,0 +1,27 @@
+services:
+  mqtt-worker:
+    build: .
+    image: mqtt-worker:latest
+    restart: always
+
+    environment:
+      MQTT_HOST: ${MQTT_HOST}
+      MQTT_PORT: ${MQTT_PORT:-1883}
+      MQTT_USERNAME: ${MQTT_USERNAME}
+      MQTT_PASSWORD: ${MQTT_PASSWORD}
+      MQTT_CLIENT_ID: "sensors-moisture"
+
+    # Optional but recommended
+    init: true
+
+healthcheck:
+  test: ["CMD-SHELL", "python3 -c 'import sys; sys.exit(0)'"]
+  interval: 30s
+  timeout: 10s
+  retries: 3
+
+deploy:
+  resources:
+    limits:
+      memory: 256M
+      cpus: '0.5'
