@@ -7,13 +7,14 @@ LABEL description="Reading sensors with python script" \
 ENV PYTHONDONTWRITEBYTECODE=1
 ENV PYTHONUNBUFFERED=1
 
+# Current working directory for the following commands
 WORKDIR /script
 
 # Install Python deps first (better caching)
 COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Copy script files BEFORE creating/switching user
+# COPY host source -> container destination (WORKDIR or /)
 COPY script/ .
 
 # Create non-root user and change ownership

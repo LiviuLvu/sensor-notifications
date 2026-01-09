@@ -231,13 +231,13 @@ Check logs for errors
 tail -f /var/log/mosquitto/mosquitto.log  
   
 **Remaining todo:**  
-[x] Install client  
-[x] install broker  
-[x] pair sensor to zigbee2mqtt, check state  
-[x] write script and test notification in dev container  
-[x] containerize script in python based image  
-[ ] install push notification app, get api key  
-[ ] use script to push received message to phone  
-[ ] deploy script on Proxmox *push img to ghrc, pull img in dokploy,  
+- [x] Install client  
+- [x] install broker  
+- [x] pair sensor to zigbee2mqtt, check state  
+- [x] write script and test notification in dev container  
+- [x] containerize script in python based image  
+- [ ] install push notification app, get api key  
+- [ ] use script to push received message to phone  
+- [ ] deploy script on Proxmox *push img to ghrc, pull img in dokploy,  
 Optional  
-[ ] pair homeassistant to zigbee  
+- [ ] pair homeassistant to zigbee  
