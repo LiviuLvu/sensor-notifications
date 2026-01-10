@@ -1,7 +1,6 @@
-# Zigbee2mqtt  
-Push notifications from sensors  
+# Push notifications from sensors using python automation
   
-**Why this project?**  
+**About this project**  
 - Practical, fun way to use Python to solve problems in home automation.  
 - Needed a reliable way to monitor and get alerts based on sensors i use around the house.   
 
@@ -229,6 +228,7 @@ Message received: zigbee2mqtt/0xa4c13875a846a8f4 b'{"battery":68,"battery_low":f
 ✓ test script in container on macos  
 ✓ install push notification app, get api key  
 ✓ use script to push received message to phone  
+
 Optional:  
 . deploy script on Proxmox Dokploy container via ghrc  
 . send email fallback  
