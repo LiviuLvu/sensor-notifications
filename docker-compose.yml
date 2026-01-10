@@ -5,12 +5,15 @@ services:
     restart: always
 
     environment:
+      # Read Sensor Data
       MQTT_HOST: ${MQTT_HOST}
       MQTT_PORT: ${MQTT_PORT:-1883}
       MQTT_USERNAME: ${MQTT_USERNAME}
       MQTT_PASSWORD: ${MQTT_PASSWORD}
       MQTT_CLIENT_ID: ${MQTT_CLIENT_ID:-sensor_moisture}
-
+      # Send push notifications
+      PUSHOVER_APP: ${PUSHOVER_APP}
+      PUSHOVER_USER: ${PUSHOVER_USER}
     # Optional but recommended
     init: true
 

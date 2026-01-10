@@ -1,11 +1,14 @@
 import os
 import paho.mqtt.client as mqtt
 
+from push_notification import send_notification
+
 MQTT_HOST = os.getenv('MQTT_HOST')
 MQTT_PORT = int(os.getenv('MQTT_PORT'))
 MQTT_USERNAME = os.getenv('MQTT_USERNAME')
 MQTT_PASSWORD = os.getenv('MQTT_PASSWORD')
-MQTT_CLIENT_ID = os.getenv('MQTT_CLIENT_ID') # python-sensors
+# Unique subscriber identifier for Mosquito
+MQTT_CLIENT_ID = os.getenv('MQTT_CLIENT_ID')
 
 if not MQTT_HOST:
     raise RuntimeError('🚨 MQTT Host is not set')
@@ -19,7 +22,14 @@ def on_connect(client, userdata, flags, reason_code, properties=None):
 
 # Callback called when a message has been received on a topic that the client subscribes to
 def on_message(client, userdata, message):
-    print(f'Message received: {message.topic} {message.payload!r}')
+    data = f'Sensor data received: \n{message.topic}\n{message.payload!r}'
+    print(data)
+    '''
+        Data sample from sensor:
+        zigbee2mqtt/0xa4c13875a846a8f4 
+        b'{"battery":91,"battery_low":false,"linkquality":255,"water_leak":false}'
+    '''
+    send_notification(data)
 
 def on_connect_fail(client, userdata, properties=None):
     print('Connection failed')
@@ -45,7 +55,7 @@ def main():
     print('Connecting to MQTT...')
     client.connect(MQTT_HOST, MQTT_PORT, keepalive=60)
 
-     # Blocks forever, auto-reconnects internally
+    # Blocks forever, auto-reconnects internally
     client.loop_forever()
 
 # Only run main if script is executed directly, not when imported
