@@ -1,4 +1,4 @@
-# Push notifications from sensors using python automation
+# Push notifications from sensors using python automation  
   
 **About this project**  
 - Practical, fun way to use Python to solve problems in home automation.  
@@ -7,7 +7,10 @@
 **Why not Homeassistant?**  
 - It's inconvenient to use dedicated device only for it Homeassistant.  
 - Inside Proxmox container, it is difficult to pair sensors, displays duplicates, and can brake after updates.  
-  
+
+**Source files for the script and docker setup**  
+[https://github.com/LiviuLvu/sensor-notifications](https://github.com/LiviuLvu/sensor-notifications)   
+
 ## Components needed for my Proxmox setup:  
   
 ### 1 Zigbee antenna USB  
@@ -16,7 +19,6 @@ Check its recognized and available in Proxmox:
 List all usb devices and search for your specific device:  
 ```
 ls /dev/serial/by-id/ 
-
 ```
   
 ### 2 MQTT message broker  
@@ -159,58 +161,6 @@ paho-mqtt docs:
 requests docs:  
 [https://requests.readthedocs.io/en/latest/](https://requests.readthedocs.io/en/latest/)   
   
-**Script connecting to MQTT broker**  
-```
-import os
-import paho.mqtt.client as mqtt
-
-MQTT_HOST = os.getenv("MQTT_HOST") # 192.168.2.40
-MQTT_PORT = int(os.getenv("MQTT_PORT")) # 1883
-MQTT_USERNAME = os.getenv("MQTT_USERNAME")
-MQTT_PASSWORD = os.getenv("MQTT_PASSWORD")
-MQTT_CLIENT_ID = os.getenv("MQTT_CLIENT_ID") # python-sensors
-
-if not MQTT_HOST:
-    raise RuntimeError("🚨 MQTT Host is not set")
-
-# The callback called when the client responds to connection request
-def on_connect(client, userdata, flags, reason_code, properties=None):
-    print('Connected to MQTT with result code:', reason_code)
-    if reason_code == 0:
-        client.subscribe("zigbee2mqtt/0xa4c13875a846a8f4")  # change to a specific topic
-
-# Callback called when a message has been received on a topic that the client subscribes to
-def on_message(client, userdata, message):
-    print(f"Message received: {message.topic} {message.payload!r}")
-
-def main():
-    client = mqtt.Client(
-        client_id=MQTT_CLIENT_ID,
-        protocol=mqtt.MQTTv311,
-        callback_api_version=mqtt.CallbackAPIVersion.VERSION2,
-    )
-
-    if MQTT_USERNAME:
-        client.username_pw_set(MQTT_USERNAME, MQTT_PASSWORD)
-
-    client.on_connect = on_connect
-    client.on_message = on_message
-
-    # Let Paho handle reconnects
-    client.reconnect_delay_set(min_delay=1, max_delay=30)
-
-    print("Connecting to MQTT...")
-    client.connect(MQTT_HOST, MQTT_PORT, keepalive=60)
-
-     # Blocks forever, auto-reconnects internally
-    client.loop_forever()
-
-# Only run main if script is executed directly, not when imported
-if __name__ == "__main__":
-    main()
-
-```
-  
 **Successful logs inside container** from running python script:  
 ```
 Connecting to MQTT...
@@ -229,7 +179,7 @@ Message received: zigbee2mqtt/0xa4c13875a846a8f4 b'{"battery":68,"battery_low":f
 ✓ install push notification app, get api key  
 ✓ use script to push received message to phone  
 
-Optional:  
+Optional  
 . deploy script on Proxmox Dokploy container via ghrc  
 . send email fallback  
 . pair homeassistant to zigbee  
