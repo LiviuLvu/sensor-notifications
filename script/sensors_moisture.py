@@ -17,8 +17,9 @@ if not MQTT_HOST:
 def on_connect(client, userdata, flags, reason_code, properties=None):
     print('Connected to MQTT with result code:', reason_code)
     if reason_code == 0:
-          # change to a specific topic
+        # Subscribe to specific topics (sensors)
         client.subscribe('zigbee2mqtt/0xa4c13875a846a8f4')
+        client.subscribe('zigbee2mqtt/0xa4c138282da678ec')
 
 # Callback called when a message has been received on a topic that the client subscribes to
 def on_message(client, userdata, message):
