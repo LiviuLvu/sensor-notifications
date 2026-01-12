@@ -23,14 +23,18 @@ def on_connect(client, userdata, flags, reason_code, properties=None):
 
 # Callback called when a message has been received on a topic that the client subscribes to
 def on_message(client, userdata, message):
-    data = f'Sensor data received: \n{message.topic}\n{message.payload!r}'
-    print(data)
+    raw_data = f'>>> Sensor data received: \n{message.topic}\n{message.payload!r}'
+    # Decode and parse message
+    decoded_payload = message.payload.decode("utf-8")
     '''
         Data sample from sensor:
         zigbee2mqtt/0xa4c13875a846a8f4 
         b'{"battery":91,"battery_low":false,"linkquality":255,"water_leak":false}'
     '''
-    send_notification(data)
+    print(raw_data)
+    print(message)
+
+    send_notification(message.topic, decoded_payload)
 
 def on_connect_fail(client, userdata, properties=None):
     print('Connection failed')
