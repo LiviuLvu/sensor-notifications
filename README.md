@@ -3,7 +3,7 @@
 **About this project**  
 - Practical, fun way to use Python to solve problems in home automation.  
 - Needed a reliable way to monitor and get alerts based on sensors i use around the house.   
-
+![Alt text](https://github.com/LiviuLvu/sensor-notifications/blob/main/95C38B83-D641-48A1-A7E4-B3B28F8D8A73_1_201_a.jpeg?raw=true)
 **Why not Homeassistant?**  
 - It's inconvenient to use dedicated device only for it Homeassistant.  
 - Inside Proxmox container, it is difficult to pair sensors, displays duplicates, and can brake after updates.  
